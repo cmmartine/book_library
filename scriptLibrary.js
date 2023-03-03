@@ -41,4 +41,23 @@ function displayBooks() {
   });
 }
 
+const bookShowBtn = document.getElementById('show');
+const bookHideBtn = document.getElementById('hide');
+const bookForm = document.getElementById('book-form');
+
+bookShowBtn.addEventListener('click', showNewBookForm);
+bookHideBtn.addEventListener('click', hideNewBookForm);
+
+function showNewBookForm(e) {
+  bookForm.classList.remove('toggle-visibility');
+  bookShowBtn.classList.add('toggle-visibility');
+  bookHideBtn.classList.remove('toggle-visibility');
+}
+
+function hideNewBookForm(e) {
+  bookForm.classList.add('toggle-visibility');
+  bookShowBtn.classList.remove('toggle-visibility');
+  bookHideBtn.classList.add('toggle-visibility');
+}
+
 displayBooks();
