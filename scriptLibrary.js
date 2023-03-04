@@ -7,8 +7,14 @@ function Book(title, author, pages) {
   this.readStatus = 'Not Read'
 }
 
+const bookContainer = document.getElementById('book-container');
 const submitBtn = document.getElementById('submit');
-
+const bookShowBtn = document.getElementById('show');
+const bookHideBtn = document.getElementById('hide');
+const bookForm = document.getElementById('book-form');
+let removeBookBtns; /* Query Selector filled upon displaying initial books and each time a new book is inserted */
+bookShowBtn.addEventListener('click', showNewBookForm);
+bookHideBtn.addEventListener('click', hideNewBookForm);
 submitBtn.addEventListener('click', addBookToLibrary);
 
 function addBookToLibrary(e) {
@@ -19,34 +25,36 @@ function addBookToLibrary(e) {
   let newBook = new Book( titleInput, authorInput, pagesInput );
   myLibrary.push(newBook);
   document.getElementById('book-form').reset();
-  insertBookHTML(newBook);
+  insertBookHTML(newBook, myLibrary.length - 1);
 }
 
-const bookContainer = document.getElementById('book-container');
-
-function insertBookHTML(book) {
-  let bookCard = document.createElement('p');
+function insertBookHTML(book, index) {
+  let bookCard = document.createElement('div');
+  bookCard.dataset.index = index;
   bookCard.classList.add('book-card');
   let title = document.createTextNode(`Title: ${book.title}\n\n`);
   let author = document.createTextNode(`Author: ${book.author}\n\n`);
   let pages = document.createTextNode(`Pages: ${book.pages}\n\n`) ;
-  let status = document.createTextNode(`Status: ${book.readStatus}`);
-  bookCard.append(title, author, pages, status);
+  let status = document.createTextNode(`Status: ${book.readStatus} \n\n`);
+  const button = document.createElement('button');
+  button.innerText = 'Remove Book';
+  button.className = 'remove-book';
+  button.dataset.index = index; 
+  bookCard.append(title, author, pages, status, button);
   bookContainer.appendChild(bookCard);
+  removeBookBtns = document.querySelectorAll('.remove-book');
+  assignRemoveBookButtons()
 }
 
 function displayBooks() {
+  let i = 0;
   myLibrary.forEach((book) => {
-    insertBookHTML(book);
+    insertBookHTML(book, i);
+    i += 1;
   });
+  removeBookBtns = document.querySelectorAll('.remove-book');
+  assignRemoveBookButtons()
 }
-
-const bookShowBtn = document.getElementById('show');
-const bookHideBtn = document.getElementById('hide');
-const bookForm = document.getElementById('book-form');
-
-bookShowBtn.addEventListener('click', showNewBookForm);
-bookHideBtn.addEventListener('click', hideNewBookForm);
 
 function showNewBookForm(e) {
   bookForm.classList.remove('toggle-visibility');
@@ -58,6 +66,22 @@ function hideNewBookForm(e) {
   bookForm.classList.add('toggle-visibility');
   bookShowBtn.classList.remove('toggle-visibility');
   bookHideBtn.classList.add('toggle-visibility');
+}
+
+function assignRemoveBookButtons() {
+  removeBookBtns.forEach((currentBtn) => {
+    currentBtn.addEventListener('click', removeBook);
+  });
+ }
+
+function removeBook(e) {
+  let bookCards = document.querySelectorAll('.book-card');
+  myLibrary.splice(e.target.dataset.index, 1);
+  bookCards.forEach((book) => {
+    if (book.dataset.index === e.target.dataset.index) {
+      book.remove();
+    };
+  });
 }
 
 displayBooks();
